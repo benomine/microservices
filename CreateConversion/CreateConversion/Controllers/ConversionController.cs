@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using CreateConversion.Models;
+using CreateConversion.Services;
+using System.Threading.Tasks;
 
 namespace CreateConversion.Controllers
 {
@@ -8,23 +10,23 @@ namespace CreateConversion.Controllers
     [Route("api/[controller]")]
     public class ConversionController : Controller
     {
-        private static IMongoCollection<Conversion> GetCollection()
+        private readonly ConversionService _conversionService;
+
+        public ConversionController(ConversionService conversionService)
         {
-            MongoClient mongoClient = new MongoClient(Startup.ConnectionString);
-            var database = mongoClient.GetDatabase("temperature");
-            var collection = database.GetCollection<Conversion>("appels");
-            return collection;
+            _conversionService = conversionService;
         }
 
         [HttpPost]
-        public IActionResult InsertConversion([FromBody] Conversion conversion)
+        public async Task<IActionResult> InsertConversionAsync([FromBody] Conversion conversion)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid data");
             }
-            IMongoCollection<Conversion> collection = GetCollection();
-            collection.InsertOne(conversion);
+
+            await _conversionService.InsertConversion(conversion);
+
             return Accepted("Ok");
         }
     }

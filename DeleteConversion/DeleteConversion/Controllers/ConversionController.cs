@@ -1,6 +1,8 @@
 ﻿using DeleteConversion.Models;
+using DeleteConversion.Services;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
+using System.Threading.Tasks;
 
 namespace DeleteConversion.Controllers
 {
@@ -8,27 +10,22 @@ namespace DeleteConversion.Controllers
     [Route("api/[controller]")]
     public class ConversionController : Controller
     {
-        private static IMongoCollection<Conversion> GetCollection()
+        private readonly ConversionService _conversionService;
+
+        public ConversionController(ConversionService conversionService)
         {
-            MongoClient mongoClient = new MongoClient(Startup.ConnectionString);
-            var database = mongoClient.GetDatabase("temperature");
-            var collection = database.GetCollection<Conversion>("appels");
-            return collection;
+            _conversionService = conversionService;
         }
 
         [HttpDelete]
-        public IActionResult DeleteConversion([FromBody] Conversion toBeDeleted)
+        public async Task<IActionResult> DeleteConversionAsync([FromBody] string id)
         {
-            IMongoCollection<Conversion> collection = GetCollection();
+            var delete = await _conversionService.DeleteConversionAsync(id);
 
-            var conversion = collection.Find(toBeDeleted.Id);
-
-            if(conversion == null)
+            if (!delete)
             {
-                return NotFound(toBeDeleted.Id);
+                NotFound(id);
             }
-
-            collection.FindOneAndDelete(conv => conv.Id == toBeDeleted.Id);
 
             return Accepted("Delete done");
         }

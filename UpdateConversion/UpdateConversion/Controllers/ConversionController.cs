@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
+using System.Threading.Tasks;
 using UpdateConversion.Models;
+using UpdateConversion.Services;
 
 namespace UpdateConversion.Controllers
 {
@@ -8,28 +9,24 @@ namespace UpdateConversion.Controllers
     [Route("api/[controller]")]
     public class ConversionController : Controller
     {
+        private readonly ConversionService _conversionService;
 
-        private static IMongoCollection<Conversion> GetCollection()
+        public ConversionController(ConversionService conversionService)
         {
-            MongoClient mongoClient = new MongoClient(Startup.ConnectionString);
-            var database = mongoClient.GetDatabase("temperature");
-            var collection = database.GetCollection<Conversion>("appels");
-            return collection;
+            _conversionService = conversionService;
         }
 
         [HttpPut]
-        public IActionResult UpdateConversion([FromBody] Conversion update)
+        public async Task<IActionResult> UpdateConversionAsync([FromBody] Conversion update)
         {
-            IMongoCollection<Conversion> collection = GetCollection();
-
-            var conversion = collection.Find<Conversion>(update.Id);
+            var conversion = _conversionService.GetConversionAsync(update.Id);
 
             if (conversion == null)
             {
                 return NotFound(update.Id);
             }
 
-            collection.ReplaceOne(conversion => conversion.Id == update.Id, update);
+            await _conversionService.UpdateConversionAsync(update);
 
             return Accepted("Update ok");
         }

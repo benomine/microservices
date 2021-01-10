@@ -3,8 +3,10 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using ReadConversion.Models;
+using ReadConversion.Services;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ReadConversion.Controllers
 {
@@ -12,21 +14,24 @@ namespace ReadConversion.Controllers
     [Route("api/[controller]")]
     public class ConversionController : Controller
     {
-        private static IMongoCollection<Conversion> GetCollection()
+
+        private readonly ConversionService _conversionService;
+
+        public ConversionController(ConversionService conversionService)
         {
-            MongoClient mongoClient = new MongoClient(Startup.ConnectionString);
-            var database = mongoClient.GetDatabase("temperature");
-            var collection = database.GetCollection<Conversion>("appels");
-            return collection;
+            _conversionService = conversionService;
         }
 
         [HttpGet]
-        public IEnumerable<Conversion> GetAll()
+        public async Task<ActionResult<List<Conversion>>> GetAllAsync()
         {
-            IMongoCollection<Conversion> collection = GetCollection();
+            return await _conversionService.GetConversionsAsync();
+        }
 
-            var retour = collection.Find(new BsonDocument()).ToList();
-            return retour;
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Conversion>> GetAsync(string id)
+        {
+            return await _conversionService.GetConversionAsync(id);
         }
     }
 }

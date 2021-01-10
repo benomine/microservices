@@ -8,9 +8,15 @@ namespace ClientService
 {
     public partial class Form1 : Form
     {
+        private readonly HttpClient client;
+
         public Form1()
         {
             InitializeComponent();
+            client = new HttpClient(new HttpClientHandler()
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            });
         }
 
         private async void Button1_Click(object sender, EventArgs e)
@@ -32,7 +38,6 @@ namespace ClientService
                 var json = JsonConvert.SerializeObject(conversionRequest);
                 var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-                using HttpClient client = new HttpClient();
                 var response =  await client.PostAsync(uri, data);
                 var result = response.Content.ReadAsStringAsync();
 

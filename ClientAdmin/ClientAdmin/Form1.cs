@@ -1,23 +1,24 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Net.Http;
 using System.Windows.Forms;
 using System.Threading.Tasks;
 using System.Text;
-using System.Drawing;
 
 namespace ClientAdmin
 {
     public partial class Form1 : Form
     {
-        HttpClient client;
+        readonly HttpClient client;
 
         public Form1()
         {
             InitializeComponent();
-            client = new HttpClient();
+            client = new HttpClient(new HttpClientHandler()
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            });
             PopulateDataGrid().ConfigureAwait(false);
         }
 
@@ -49,14 +50,14 @@ namespace ClientAdmin
         private async void Button3_ClickAsync(object sender, EventArgs e)
         {
             Conversion conversion = (Conversion)dataGridView1.CurrentRow.DataBoundItem;
-            await HttpDeleteConversion(conversion);
+            await HttpDeleteConversion(conversion.Id);
 
             await PopulateDataGrid();
         }
 
-        private async Task HttpDeleteConversion(Conversion conversion)
+        private async Task HttpDeleteConversion(string id)
         {
-            var json = JsonConvert.SerializeObject(conversion);
+            var json = JsonConvert.SerializeObject(id);
             Uri uri = new Uri("https://localhost:8001/api/conversion");
 
             var request = new HttpRequestMessage
@@ -90,7 +91,7 @@ namespace ClientAdmin
                 DialogResult result = MessageBox.Show("Do you want to delete this record?", "Confirmation", MessageBoxButtons.OKCancel);
                 if (result == DialogResult.OK)
                 {
-                    await HttpDeleteConversion(conversion);
+                    await HttpDeleteConversion(conversion.Id);
                     await PopulateDataGrid();
                 }
             }
