@@ -7,8 +7,8 @@ Microservices ASP.NET Core, REST, C#
 * App/Container individuel pour chaque opération CRUD
 * Microservice de Conversion de température
 * Deux clients :
-** admin supportant Read, Update et Delete
-** client pour la conversion supportant Create
+  ** admin supportant Read, Update et Delete
+  ** client pour la conversion supportant Create
 
 ## Docker
 
