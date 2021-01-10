@@ -1,0 +1,130 @@
+version: '3.8'
+services:
+  read:
+    build:
+      context: ./ReadConversion
+      dockerfile: ReadConversion/Dockerfile
+    container_name: read
+    ports:
+      - "5001:443"
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ASPNETCORE_URLS=https://+;http://+"
+      - ASPNETCORE_HTTPS_PORT=5001
+      - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
+      - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
+      - ConnectionStrings__Mongo:mongodb://mongo
+    volumes:
+      - ./Certificates:/app/Infrastructure/Certificate/
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    networks:
+      - microservices
+  create:
+    build:
+      context: ./CreateConversion
+      dockerfile: CreateConversion/Dockerfile
+    container_name: create
+    ports:
+      - "4001:443"
+      - "4000:80"
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ASPNETCORE_URLS=https://+;http://+"
+      - ASPNETCORE_HTTPS_PORT=4001
+      - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
+      - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
+      - ConnectionStrings__Mongo:mongodb://mongo
+    volumes:
+      - ./Certificates:/app/Infrastructure/Certificate/
+    networks:
+      - microservices
+  update:
+    build:
+      context: ./UpdateConversion
+      dockerfile: UpdateConversion/Dockerfile
+    container_name: update
+    ports:
+      - "7001:443"
+      - "7000:80"
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ASPNETCORE_URLS=https://+;http://+"
+      - ASPNETCORE_HTTPS_PORT=7001
+      - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
+      - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
+      - ConnectionStrings__Mongo:mongodb://mongo
+    volumes:
+      - ./Certificates:/app/Infrastructure/Certificate/
+    networks:
+      - microservices
+  delete:
+    build:
+      context: ./DeleteConversion
+      dockerfile: DeleteConversion/Dockerfile
+    container_name: delete
+    ports:
+      - "8001:443"
+      - "8000:80"
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ASPNETCORE_URLS=https://+;http://+"
+      - ASPNETCORE_HTTPS_PORT=8001
+      - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
+      - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
+      - ConnectionStrings__Mongo:mongodb://mongo
+    volumes:
+      - ./Certificates:/app/Infrastructure/Certificate/
+    networks:
+      - microservices
+  conversion:
+    build:
+      context: ./CTService
+      dockerfile: CTService/Dockerfile
+    ports:
+      - "6001:443"
+      - "6000:80"
+    container_name: conversion
+    depends_on:
+      - create
+    links:
+      - create
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ASPNETCORE_URLS=https://+;http://+"
+      - ASPNETCORE_HTTPS_PORT=6001
+      - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
+      - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
+      - ConnectionStrings__ApiCreate:https://create:443
+    volumes:
+      - ./Certificates:/app/Infrastructure/Certificate/
+    networks:
+      - microservices
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "2000:27017"
+    volumes:
+      - ./mongo:/data/db
+    restart: always
+    networks:
+      - microservices
+networks:
+    microservices:
+      driver: bridge
