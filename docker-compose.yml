@@ -14,7 +14,6 @@ services:
       - ASPNETCORE_HTTPS_PORT=5001
       - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
       - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
-      - ConnectionStrings__Mongo:mongodb://mongo
     volumes:
       - ./Certificates:/app/Infrastructure/Certificate/
     depends_on:
@@ -41,7 +40,6 @@ services:
       - ASPNETCORE_HTTPS_PORT=4001
       - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
       - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
-      - ConnectionStrings__Mongo:mongodb://mongo
     volumes:
       - ./Certificates:/app/Infrastructure/Certificate/
     networks:
@@ -64,7 +62,6 @@ services:
       - ASPNETCORE_HTTPS_PORT=7001
       - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
       - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
-      - ConnectionStrings__Mongo:mongodb://mongo
     volumes:
       - ./Certificates:/app/Infrastructure/Certificate/
     networks:
@@ -87,7 +84,6 @@ services:
       - ASPNETCORE_HTTPS_PORT=8001
       - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
       - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
-      - ConnectionStrings__Mongo:mongodb://mongo
     volumes:
       - ./Certificates:/app/Infrastructure/Certificate/
     networks:
@@ -110,14 +106,13 @@ services:
       - ASPNETCORE_HTTPS_PORT=6001
       - Kestrel__Certificates__Default__Password=xsdRyXGjjhEEUKQYNQQQ
       - Kestrel__Certificates__Default__Path=/app/Infrastructure/Certificate/microservices.pfx
-      - ConnectionStrings__ApiCreate:https://create:443
     volumes:
       - ./Certificates:/app/Infrastructure/Certificate/
     networks:
       - microservices
   mongo:
     image: mongo
-    container_name: mongo
+    container_name: mongoRestCSharp
     ports:
       - "2000:27017"
     volumes:
@@ -127,4 +122,3 @@ services:
       - microservices
 networks:
     microservices:
-      driver: bridge

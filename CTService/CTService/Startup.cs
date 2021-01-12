@@ -1,8 +1,11 @@
+using CTService.Models;
+using CTService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace CTService
 {
@@ -13,7 +16,7 @@ namespace CTService
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            ConnectionString = Configuration.GetConnectionString("ApiCreate");
+            ConnectionString = Configuration.GetConnectionString("Mongo");
         }
 
         public IConfiguration Configuration { get; }
@@ -21,6 +24,13 @@ namespace CTService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<ConversionDatabaseSettings>(
+                Configuration.GetSection(nameof(ConversionDatabaseSettings)));
+
+            services.AddSingleton<IConversionDatabaseSettings>(sp =>
+                sp.GetRequiredService<IOptions<ConversionDatabaseSettings>>().Value);
+
+            services.AddSingleton<ConversionService>();
 
             services.AddControllers();
         }

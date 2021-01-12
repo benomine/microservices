@@ -14,7 +14,7 @@ namespace DeleteConversion.Services
 
         public ConversionService(IConversionDatabaseSettings settings)
         {
-            var mongoClient = new MongoClient(Startup.ConnectionString);
+            var mongoClient = new MongoClient(settings.ConnectionString);
             //var database = mongoClient.GetDatabase("temperature");
             var database = mongoClient.GetDatabase(settings.DatabaseName);
             //_conversions = database.GetCollection<Conversion>("appels");

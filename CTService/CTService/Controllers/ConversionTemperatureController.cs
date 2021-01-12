@@ -1,17 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 using CTService.Models;
-using System.Net.Http;
-using Newtonsoft.Json;
-using System.Text;
+using CTService.Services;
 
 namespace CTService.Controllers
 {
+
     [ApiController]
     [Route("api/[controller]")]
     public class ConversionTemperatureController : Controller
     {
+
+        private readonly ConversionService _service;
+
+        public ConversionTemperatureController(ConversionService service)
+        {
+            _service = service;
+        }
 
         [HttpPost]
         public async Task<IActionResult> ConversionAsync([FromBody] Conversion conversion)
@@ -23,19 +28,9 @@ namespace CTService.Controllers
 
             var result = conversion.Sens == 0 ? Calculs.Calculs.ConvertFToC(conversion.Valeur) : Calculs.Calculs.ConvertCToF(conversion.Valeur);
 
-            await SendCreate(conversion);
+            await _service.SendCreate(conversion);
 
             return Accepted(result);
-        }
-
-        private static async Task<HttpResponseMessage> SendCreate(Conversion conversion)
-        {
-            using var client = new HttpClient();
-
-            var uri = new Uri(Startup.ConnectionString+"/api/conversion");
-            var json = JsonConvert.SerializeObject(conversion);
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
-            return await client.PostAsync(uri, data);
         }
     }
 }
