@@ -2,8 +2,8 @@ version: '3.8'
 services:
   read:
     build:
-      context: ./ReadConversion
-      dockerfile: ReadConversion/Dockerfile
+      context: ./Read
+      dockerfile: Read/Dockerfile
     container_name: read
     ports:
       - "5001:443"
@@ -24,8 +24,8 @@ services:
       - microservices
   create:
     build:
-      context: ./CreateConversion
-      dockerfile: CreateConversion/Dockerfile
+      context: ./Create
+      dockerfile: Create/Dockerfile
     container_name: create
     ports:
       - "4001:443"
@@ -46,8 +46,8 @@ services:
       - microservices
   update:
     build:
-      context: ./UpdateConversion
-      dockerfile: UpdateConversion/Dockerfile
+      context: ./Update
+      dockerfile: Update/Dockerfile
     container_name: update
     ports:
       - "7001:443"
@@ -68,8 +68,8 @@ services:
       - microservices
   delete:
     build:
-      context: ./DeleteConversion
-      dockerfile: DeleteConversion/Dockerfile
+      context: ./Delete
+      dockerfile: Delete/Dockerfile
     container_name: delete
     ports:
       - "8001:443"
@@ -90,8 +90,8 @@ services:
       - microservices
   conversion:
     build:
-      context: ./CTService
-      dockerfile: CTService/Dockerfile
+      context: ./Conversion
+      dockerfile: Conversion/Dockerfile
     ports:
       - "6001:443"
       - "6000:80"
@@ -118,6 +118,12 @@ services:
     volumes:
       - ./mongo:/data/db
     restart: always
+    networks:
+      - microservices
+  eureka:
+    build:
+      context: ./Eureka
+      dockerfile: Dockerfile
     networks:
       - microservices
 networks:

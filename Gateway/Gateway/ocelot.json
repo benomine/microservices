@@ -1,0 +1,76 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/conversion/read",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/read",
+      "UseServiceDiscovery": true,
+      "ServiceName": "read-service",
+      "UpstreamHttpMethod": [ "GET" ],
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/conversion/read/{id}",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/read/{id}",
+      "UseServiceDiscovery": true,
+      "ServiceName": "read-service",
+      "UpstreamHttpMethod": [ "GET" ],
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/conversion/create",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/create",
+      "UseServiceDiscovery": true,
+      "ServiceName": "create-service",
+      "UpstreamHttpMethod": [ "POST" ],
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/conversion/delete/{id}",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/delete/{id}",
+      "UseServiceDiscovery": true,
+      "ServiceName": "delete-service",
+      "UpstreamHttpMethod": [ "DELETE" ],
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/conversion/update",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/update",
+      "UseServiceDiscovery": true,
+      "ServiceName": "update-service",
+      "UpstreamHttpMethod": [ "PUT" ],
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/conversion/temperature",
+      "DownstreamScheme": "https",
+      "UpstreamPathTemplate": "/api/temperature",
+      "UseServiceDiscovery": true,
+      "ServiceName": "conversion-service",
+      "UpstreamHttpMethod": [ "POST" ],
+      "LoadBalancerOptions": {
+        "Type": "RoundRobin"
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl":  "https://localhost:9001",
+    "RequestIdKey": "OcRequestId",
+    "AdministrationPath": "/administration",
+    "ServiceDiscoveryProvider": { "Type": "Eureka" }
+  }
+}
