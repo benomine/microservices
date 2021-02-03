@@ -8,8 +8,8 @@ Microservices ASP.NET Core, REST, C#
 * App/Container individuel pour chaque opération CRUD, utilisation de [Steeltoe](https://steeltoe.io/) pour le discovery et le lien avec Eureka.
 * Microservice de Conversion de température.
 * Deux clients :
-        ** admin supportant Read, Update et Delete
-        ** client pour la conversion faisant appel au µ-service Create
+    ** admin supportant Read, Update et Delete
+    ** client pour la conversion faisant appel au µ-service Create
 
 ## Docker
 
